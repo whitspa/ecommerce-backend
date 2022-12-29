@@ -3,20 +3,38 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // find all tags
-  // be sure to include its associated Product data. How do I do this?
-  Tag.findAll().then((TagData) => {
-    res.json(TagData);
-  });
+  // be sure to include its associated Product data.
+  try {
+    const TagData = await Tag.findAll({
+     
+      include: [{ model: Product }], //Do I also need to include ProductTag here?
+    });
+    res.status(200).json(TagData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single tag by its `id`
-  // be sure to include its associated Product data. How do I do this?
-  Tag.findByPk(req.params.id).then((TagData) => {
-    res.json(TagData);
-  });
+  // be sure to include its associated Product data.
+  try {
+    const TagData = await Tag.findByPk(req.params.id, {
+     
+      include: [{ model: Product }],
+    });
+
+    if (!TagData) {
+      res.status(404).json({ message: 'No Tag found with that id!' });
+      return;
+    }
+
+    res.status(200).json(TagData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 router.post('/', (req, res) => {
