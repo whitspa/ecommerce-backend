@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   // find all categories. Is CategoryData correct?
   // be sure to include its associated Products
  try {
-  const CategoryData = await  Category.findAll({
+  const categoryData = await  Category.findAll({
     include: [{ model: Product }]
   });
   res.status(200).json(categoryData);
@@ -75,6 +75,10 @@ router.delete('/:id', (req, res) => {
     },
   })
     .then((deletedCategory) => {
+      console.log(deletedCategory)
+      if(!deletedCategory){
+        res.json({message: "No category with that ID, failed to delete!"})
+      }
       res.json(deletedCategory);
     })
     .catch((err) => res.json(err));

@@ -42,21 +42,18 @@ router.get('/:id', async (req, res) => {
 
 // create new product
 router.post('/', (req, res) => {
-  /* req.body should look like this...Why should it look like this? What's wrong w the below?
+  /* req.body should look like this...
     {
-      product_name: "Rugby",
+      product_name: "Basketball",
       price: 200.00,
       stock: 3,
       tagIds: [1, 2, 3, 4]
     }
   */
   Product.create(req.body)
-    .then((newProduct) => {
-      res.json(newProduct);
-    })
-    //.then((product) => {
+    .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
+      if (req.body.tagIds && req.body.tagIds.length) {
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
             product_id: product.id,
@@ -73,7 +70,8 @@ router.post('/', (req, res) => {
       console.log(err);
       res.status(400).json(err);
     });
-//});
+});
+
 
 // update product
 router.put('/:id', (req, res) => {
