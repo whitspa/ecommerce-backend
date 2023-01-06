@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { response } = require('express');
 const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
@@ -51,26 +52,28 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
   Tag.update(
-    {
-      tag_name:req.body.category_name,
-    },
-    {
-      where: {
-    id: req.params.id,
-    },
-  }
-  )
+    req.body,{
+     where: {
+      id: req.params.id
+     }
+    
+      }).then(updatedTag=>{
+    response.json(updatedTag)
+  }).catch(err=>{
+    console.log(err)
+    res.json(err)
+  })
 });
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
   Tag.destroy({
     where: {
-      id: req.params.book_id,
+      id: req.params.id,
     },
   })
-    .then((deletedBook) => {
-      res.json(deletedBook);
+    .then((deletedTag) => {
+      res.json(deletedTag);
     })
     .catch((err) => res.json(err));
 });
